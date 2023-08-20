@@ -1,0 +1,4113 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"title": "Bonza Bike Tours REST API",
+		"description": "REST API description for the Bonza Bike Tours BMS dashboard.",
+		"contact": {
+			"name": "API Support",
+			"email": "alexander.shumilov@toptal.com"
+		},
+		"version": "1.2"
+	},
+	"servers": [{
+			"url": "bonzabiketours-api.herokuapp.com/api/v1",
+			"description": "Heroku server - CI"
+		},
+		{
+			"url": "bms.bonzabiketours.alexshumilov.ru:3001/api/v1",
+			"description": "Staging server"
+		},
+		{
+			"url": "bms.bonzabiketours.alexshumilov.ru:3002/api/v1",
+			"description": "Development server"
+		}
+	],
+	"security": [{
+		"api_key": []
+	}],
+	"tags": [{
+			"name": "auth",
+			"description": "Authorization"
+		},
+		{
+			"name": "users",
+			"description": "User management"
+		},
+		{
+			"name": "purchases",
+			"description": "Purchases management"
+		},
+		{
+			"name": "settings",
+			"description": "Web app setting"
+		},
+		{
+			"name": "allotments",
+			"description": "Allotments management"
+		},
+		{
+			"name": "bookingPartners",
+			"description": "Booking partners management"
+		},
+		{
+			"name": "products",
+			"description": "Products management"
+		},
+		{
+			"name": "emailTemplates",
+			"description": "Email templates management"
+		},
+		{
+			"name": "broadcasts",
+			"description": "Broadcasts management"
+		},
+		{
+			"name": "reports",
+			"description": "Reports management"
+		}
+	],
+	"paths": {
+		"/auth": {
+			"get": {
+				"tags": [
+					"auth"
+				],
+				"summary": "Check if user is signed in",
+				"responses": {
+					"200": {
+						"description": "User was signed in",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					}
+				}
+			},
+			"post": {
+				"tags": [
+					"auth"
+				],
+				"summary": "Sign in",
+				"requestBody": {
+					"description": "User credentials",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AuthRequest"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "User was signed in",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					}
+				}
+			},
+			"delete": {
+				"tags": [
+					"auth"
+				],
+				"summary": "Sign out",
+				"responses": {
+					"200": {
+						"description": "User was signed out",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+
+		"/users": {
+			"get": {
+				"tags": [
+					"users"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Returns list of users",
+				"parameters": [{
+						"$ref": "#/components/parameters/limit"
+					},
+					{
+						"$ref": "#/components/parameters/page"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "List of users",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/User"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					}
+				}
+			},
+			"post": {
+				"tags": [
+					"users"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Creates user",
+				"parameters": [],
+				"requestBody": {
+					"description": "User description",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/User"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "User was created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APICreatedEntityResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					}
+				}
+			}
+		},
+		"/users/{id}": {
+			"parameters": [{
+				"$ref": "#/components/parameters/id"
+			}],
+			"get": {
+				"tags": [
+					"users"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Returns user description",
+				"responses": {
+					"200": {
+						"description": "User description",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			},
+			"put": {
+				"tags": [
+					"users"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Updates specific user",
+				"responses": {
+					"200": {
+						"description": "Updated user description",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					}
+				}
+			}
+		},
+
+		"/purchases": {
+			"get": {
+				"tags": [
+					"purchases"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Returns list of purchases",
+				"parameters": [{
+						"$ref": "#/components/parameters/limit"
+					},
+					{
+						"$ref": "#/components/parameters/page"
+					},
+					{
+						"name": "purchaseTour",
+						"in": "query",
+						"description": "Specifies if tours are included in search results",
+						"style": "form",
+						"schema": {
+							"type": "integer"
+						}
+					},
+					{
+						"name": "purchaseMisc",
+						"in": "query",
+						"description": "Specifies if miscellaneous are included in search results",
+						"style": "form",
+						"schema": {
+							"type": "integer"
+						}
+					},
+					{
+						"name": "travelerName",
+						"in": "query",
+						"description": "Traveler name",
+						"style": "form",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "travelerEmail",
+						"in": "query",
+						"description": "Traveler email",
+						"style": "form",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "purchaseFromDate",
+						"in": "query",
+						"description": "Purchase from date",
+						"style": "form",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "purchaseToDate",
+						"in": "query",
+						"description": "Purchase to date",
+						"style": "form",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "tourDateFrom",
+						"in": "query",
+						"description": "Tour date from",
+						"style": "form",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "tourDateTo",
+						"in": "query",
+						"description": "Tour date to",
+						"style": "form",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "productId",
+						"in": "query",
+						"description": "Product identifier",
+						"style": "form",
+						"schema": {
+							"type": "integer"
+						}
+					},
+					{
+						"name": "bookingId",
+						"in": "query",
+						"description": "Booking identifier",
+						"style": "form",
+						"schema": {
+							"type": "integer"
+						}
+					},
+					{
+						"name": "bookingPartnerId",
+						"in": "query",
+						"description": "Booking partner identifier",
+						"style": "form",
+						"schema": {
+							"type": "integer"
+						}
+					},
+					{
+						"name": "userId",
+						"in": "query",
+						"description": "User identifier",
+						"style": "form",
+						"schema": {
+							"type": "integer"
+						}
+					},
+					{
+						"name": "bookingRefId",
+						"in": "query",
+						"description": "Booking reference identifier",
+						"style": "form",
+						"schema": {
+							"type": "integer"
+						}
+					},
+					{
+						"name": "status",
+						"in": "query",
+						"description": "Status",
+						"style": "form",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "family",
+						"in": "query",
+						"description": "Searches for families",
+						"style": "form",
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"name": "travelagency",
+						"in": "query",
+						"description": "Travel agency",
+						"style": "form",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "famils",
+						"in": "query",
+						"description": "Searches for famils",
+						"style": "form",
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "List of puchases",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Purchase"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					}
+				}
+			}
+		},
+
+		"/purchases/tours/{purchaseId}": {
+			"get": {
+				"tags": [
+					"purchases"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Get specific tour purchase",
+				"parameters": [{
+					"name": "purchaseId",
+					"in": "path",
+					"description": "Purchase identifier",
+					"style": "simple",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"responses": {
+					"200": {
+						"description": "Tour purchase",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/purchases/misc/{purchaseId}": {
+			"get": {
+				"tags": [
+					"purchases"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Get specific misc purchase",
+				"parameters": [{
+					"name": "purchaseId",
+					"in": "path",
+					"description": "Purchase identifier",
+					"style": "simple",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"responses": {
+					"200": {
+						"description": "Misc purchase",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			},
+			"put": {
+				"tags": [
+					"purchases"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Update miscellaneous purchase",
+				"parameters": [{
+					"name": "purchaseId",
+					"in": "path",
+					"description": "Purchase identifier",
+					"style": "simple",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"requestBody": {
+					"description": "Miscellaneous purchase information",
+					"content": {
+						"application/json": {
+							"schema": {
+								"title": "",
+								"properties": {
+									"purchaseDate": {
+										"type": "string"
+									},
+									"purchaseCity": {
+										"type": "string"
+									},
+									"total": {
+										"type": "integer"
+									},
+									"internalNotes": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Miscellaneous update was made",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/purchases/tours": {
+			"post": {
+				"tags": [
+					"purchases"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Purchase one of tours",
+				"requestBody": {
+					"description": "Tour purchase information",
+					"content": {
+						"application/json": {
+							"schema": {
+								"title": "",
+								"properties": {
+									"paymentDate": {
+										"type": "string"
+									},
+									"travelerFirstname": {
+										"type": "string"
+									},
+									"travelerLastname": {
+										"type": "string"
+									},
+									"additionalNames": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									},
+									"phone": {
+										"type": "string"
+									},
+									"hotel": {
+										"type": "string"
+									},
+									"originCountry": {
+										"type": "string"
+									},
+									"totalGross": {
+										"type": "string"
+									},
+									"commission": {
+										"type": "string"
+									},
+									"totalNet": {
+										"type": "string"
+									},
+									"revenueAccNo": {
+										"type": "string"
+									},
+									"invoice": {
+										"type": "string"
+									},
+									"invoiceDate": {
+										"type": "string"
+									},
+									"taxInc": {
+										"type": "string"
+									},
+									"taxCode": {
+										"type": "string"
+									},
+									"userID": {
+										"type": "string"
+									},
+									"internalNotes": {
+										"type": "string"
+									},
+									"status": {
+										"type": "string"
+									},
+									"productID": {
+										"type": "string"
+									},
+									"voucher": {
+										"type": "string"
+									},
+									"voucherLastname": {
+										"type": "string"
+									},
+									"voucherFirstname": {
+										"type": "string"
+									},
+									"city": {
+										"type": "string"
+									},
+									"tourDate": {
+										"type": "string"
+									},
+									"overrideTourTime": {
+										"type": "string"
+									},
+									"family": {
+										"type": "string"
+									},
+									"noOfAdult": {
+										"type": "integer"
+									},
+									"adultPrice": {
+										"type": "number"
+									},
+									"noOfChildren": {
+										"type": "integer"
+									},
+									"childPrice": {
+										"type": "number"
+									},
+									"noOfBabies": {
+										"type": "integer"
+									},
+									"noOfFamilyGroups": {
+										"type": "integer"
+									},
+									"familyRate": {
+										"type": "string"
+									},
+									"noOfAdditionals": {
+										"type": "integer"
+									},
+									"additionalRate": {
+										"type": "string"
+									},
+									"noOfAddChildren": {
+										"type": "integer"
+									},
+									"checkIn": {
+										"type": "string"
+									},
+									"noShow": {
+										"type": "string"
+									},
+									"confirmedByPartner": {
+										"type": "string"
+									},
+									"babySeats": {
+										"type": "string"
+									},
+									"trailAlongs": {
+										"type": "string"
+									},
+									"smallKidsBikes": {
+										"type": "string"
+									},
+									"largeKidsBikes": {
+										"type": "string"
+									},
+									"ccNo": {
+										"type": "string"
+									},
+									"bookingRefID": {
+										"type": "string"
+									},
+									"travelAgency": {
+										"type": "string"
+									},
+									"bookingSource": {
+										"type": "string"
+									},
+									"guestNote": {
+										"type": "string"
+									},
+									"partnerEmail": {
+										"type": "string"
+									},
+									"operatorEmail": {
+										"type": "string"
+									},
+									"twoDayRule": {
+										"type": "string"
+									},
+									"famils": {
+										"type": "string"
+									},
+									"sendToGuest": {
+										"type": "integer"
+									},
+									"sendToPartner": {
+										"type": "integer"
+									},
+									"sendToTourOperator": {
+										"type": "integer"
+									}
+								}
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Tour purchase was made",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APICreatedEntityResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					}
+				}
+			}
+		},
+		"/purchases/tours/{detailId}": {
+			"put": {
+				"tags": [
+					"purchases"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Update tour purchase",
+				"parameters": [{
+					"name": "detailId",
+					"in": "path",
+					"description": "Tour purchase identifier",
+					"style": "simple",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"requestBody": {
+					"description": "Tour purchase information",
+					"content": {
+						"application/json": {
+							"schema": {
+								"title": "",
+								"properties": {
+									"paymentDate": {
+										"type": "string"
+									},
+									"travelerFirstname": {
+										"type": "string"
+									},
+									"travelerLastname": {
+										"type": "string"
+									},
+									"additionalNames": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									},
+									"phone": {
+										"type": "string"
+									},
+									"hotel": {
+										"type": "string"
+									},
+									"originCountry": {
+										"type": "string"
+									},
+									"totalGross": {
+										"type": "string"
+									},
+									"commission": {
+										"type": "string"
+									},
+									"totalNet": {
+										"type": "string"
+									},
+									"revenueAccNo": {
+										"type": "string"
+									},
+									"invoice": {
+										"type": "string"
+									},
+									"invoiceDate": {
+										"type": "string"
+									},
+									"taxInc": {
+										"type": "string"
+									},
+									"taxCode": {
+										"type": "string"
+									},
+									"userID": {
+										"type": "string"
+									},
+									"internalNotes": {
+										"type": "string"
+									},
+									"status": {
+										"type": "string"
+									},
+									"productID": {
+										"type": "string"
+									},
+									"voucher": {
+										"type": "string"
+									},
+									"voucherLastname": {
+										"type": "string"
+									},
+									"voucherFirstname": {
+										"type": "string"
+									},
+									"tourCity": {
+										"type": "string"
+									},
+									"tourDate": {
+										"type": "string"
+									},
+									"overrideTourTime": {
+										"type": "string"
+									},
+									"family": {
+										"type": "string"
+									},
+									"noOfAdult": {
+										"type": "integer"
+									},
+									"adultPrice": {
+										"type": "number"
+									},
+									"noOfChildren": {
+										"type": "integer"
+									},
+									"childPrice": {
+										"type": "number"
+									},
+									"noOfBabies": {
+										"type": "integer"
+									},
+									"noOfFamilyGroups": {
+										"type": "integer"
+									},
+									"familyRate": {
+										"type": "string"
+									},
+									"noOfAdditionals": {
+										"type": "integer"
+									},
+									"additionalRate": {
+										"type": "string"
+									},
+									"noOfAddChildren": {
+										"type": "integer"
+									},
+									"checkIn": {
+										"type": "string"
+									},
+									"noShow": {
+										"type": "string"
+									},
+									"confirmedByPartner": {
+										"type": "string"
+									},
+									"babySeats": {
+										"type": "string"
+									},
+									"trailAlongs": {
+										"type": "string"
+									},
+									"smallKidsBikes": {
+										"type": "string"
+									},
+									"largeKidsBikes": {
+										"type": "string"
+									},
+									"ccNo": {
+										"type": "string"
+									},
+									"bookingRefID": {
+										"type": "string"
+									},
+									"travelAgency": {
+										"type": "string"
+									},
+									"bookingSource": {
+										"type": "string"
+									},
+									"guestNote": {
+										"type": "string"
+									},
+									"partnerEmail": {
+										"type": "string"
+									},
+									"operatorEmail": {
+										"type": "string"
+									},
+									"twoDayRule": {
+										"type": "string"
+									},
+									"famils": {
+										"type": "string"
+									},
+									"sendToGuest": {
+										"type": "integer"
+									},
+									"sendToPartner": {
+										"type": "integer"
+									},
+									"sendToTourOperator": {
+										"type": "integer"
+									}
+								}
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Tour purchase was updated",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/purchases/misc": {
+			"post": {
+				"tags": [
+					"purchases"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Purchase one of miscellaneous",
+				"requestBody": {
+					"description": "Miscellaneous purchase information",
+					"content": {
+						"application/json": {
+							"schema": {
+								"title": "",
+								"properties": {
+									"purchaseDate": {
+										"type": "string"
+									},
+									"purchaseCity": {
+										"type": "string"
+									},
+									"total": {
+										"type": "integer"
+									},
+									"internalNotes": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Miscellaneous purchase was made",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APICreatedEntityResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					}
+				}
+			}
+		},
+		"/purchases/misc/addtotour/{purchaseId}": {
+			"post": {
+				"tags": [
+					"purchases"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Add miscellaneous to purchase",
+				"parameters": [{
+					"name": "purchaseId",
+					"in": "path",
+					"description": "Purchase identifier",
+					"style": "simple",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"responses": {
+					"200": {
+						"description": "Purchase price was recalculated",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/purchases/isbookeddate": {
+			"get": {
+				"tags": [
+					"purchases"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Check if the date can be booked",
+				"parameters": [{
+						"name": "productId",
+						"in": "query",
+						"description": "Product identifier",
+						"style": "form",
+						"schema": {
+							"type": "integer"
+						},
+						"required": true
+					},
+					{
+						"name": "date",
+						"in": "query",
+						"description": "Booked date",
+						"style": "form",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Check results",
+						"content": {
+							"application/json": {
+								"schema": {
+									"title": "result",
+									"type": "number"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					}
+				}
+			}
+		},
+		"/purchases/checkins": {
+			"get": {
+				"tags": [
+					"purchases"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Returns checkins for specific date and city",
+				"parameters": [{
+						"name": "date",
+						"in": "query",
+						"description": "Search date",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					},
+					{
+						"name": "city",
+						"in": "query",
+						"description": "Search city",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Found checkins",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Purchase"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					}
+				}
+			}
+		},
+		"/purchases/{detailId}/checkin": {
+			"post": {
+				"tags": [
+					"purchases"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Changes the check-in state for purchase",
+				"parameters": [{
+					"name": "detailId",
+					"in": "path",
+					"description": "Tour purchase identifier",
+					"style": "simple",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"requestBody": {
+					"description": "Desired check-in value",
+					"content": {
+						"application/json": {
+							"schema": {
+								"title": "",
+								"properties": {
+									"checkIn": {
+										"type": "integer"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Check-in state was changed",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					}
+				}
+			}
+		},
+		"/purchases/{detailId}/noshow": {
+			"post": {
+				"tags": [
+					"purchases"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Changes the no-show state for purchase",
+				"parameters": [{
+					"name": "detailId",
+					"in": "path",
+					"description": "Tour purchase identifier",
+					"style": "simple",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"requestBody": {
+					"description": "Desired no-show value",
+					"content": {
+						"application/json": {
+							"schema": {
+								"title": "",
+								"properties": {
+									"noShow": {
+										"type": "integer"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "No-show state was changed",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/purchases/{purchaseId}/payment": {
+			"post": {
+				"tags": [
+					"purchases"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"parameters": [{
+					"name": "purchaseId",
+					"in": "path",
+					"description": "Purchase identifier",
+					"style": "simple",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"summary": "Creates payment for purchase",
+				"requestBody": {
+					"description": "Payment description",
+					"content": {
+						"application/json": {
+							"schema": {
+								"title": "",
+								"properties": {
+									"paymentDate": {
+										"type": "string"
+									},
+									"amount": {
+										"type": "string"
+									},
+									"method": {
+										"type": "string"
+									},
+									"internalNotes": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Payment was created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APICreatedEntityResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/purchases/{purchaseId}/refund": {
+			"post": {
+				"tags": [
+					"purchases"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"parameters": [{
+					"name": "purchaseId",
+					"in": "path",
+					"description": "Purchase identifier",
+					"style": "simple",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"summary": "Refunds purchase payment",
+				"requestBody": {
+					"description": "Refund description",
+					"content": {
+						"application/json": {
+							"schema": {
+								"title": "",
+								"properties": {
+									"paymentDate": {
+										"type": "string"
+									},
+									"amount": {
+										"type": "string"
+									},
+									"method": {
+										"type": "string"
+									},
+									"internalNotes": {
+										"type": "string"
+									},
+									"refundReason": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Refund was created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APICreatedEntityResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/purchases/{purchaseId}/history": {
+			"get": {
+				"tags": [
+					"purchases"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"parameters": [{
+					"name": "purchaseId",
+					"in": "path",
+					"description": "Purchase identifier",
+					"style": "simple",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"summary": "Purchase history",
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/PurchaseHistory"
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/purchases/charges/{chargeId}": {
+			"put": {
+				"tags": [
+					"purchases"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"parameters": [{
+					"name": "chargeId",
+					"in": "path",
+					"description": "Charge identifier",
+					"style": "simple",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"summary": "Updates charge",
+				"requestBody": {
+					"description": "Application setting description",
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"addedToAccounting": {
+										"type": "boolean"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Updates charge",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			},
+			"delete": {
+				"tags": [
+					"purchases"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"parameters": [{
+					"name": "chargeId",
+					"in": "path",
+					"description": "Charge identifier",
+					"style": "simple",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"summary": "Deletes charge",
+				"responses": {
+					"200": {
+						"description": "Deletes charge",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/settings": {
+			"get": {
+				"tags": [
+					"settings"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Application settings",
+				"responses": {
+					"200": {
+						"description": "Application settings",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/ApplicationSetting"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"tags": [
+					"settings"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"requestBody": {
+					"description": "Application setting description",
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"value": {
+											"type": "string"
+										},
+										"key": {
+											"type": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"summary": "Bulk application settings update",
+				"responses": {
+					"200": {
+						"description": "Update application setting",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/allotments": {
+			"get": {
+				"tags": [
+					"allotments"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Returns events for specified range",
+				"parameters": [{
+						"name": "productId",
+						"description": "Product identifier",
+						"in": "query",
+						"schema": {
+							"type": "integer"
+						},
+						"required": true
+					},
+					{
+						"name": "range",
+						"description": "Search range (number of months before / after)",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						},
+						"example": [
+							"3:3",
+							"3:18"
+						],
+						"required": true
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Available allotments",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"tags": [
+					"allotments"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Create or update allotment",
+				"requestBody": {
+					"description": "Allotment details",
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"productId": {
+										"type": "string"
+									},
+									"startDate": {
+										"type": "string"
+									},
+									"endDate": {
+										"type": "string"
+									},
+									"allotmentDay": {
+										"type": "string"
+									},
+									"total": {
+										"type": "number"
+									},
+									"override": {
+										"type": "number"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Creates or updates allotment",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/allotments/available": {
+			"get": {
+				"tags": [
+					"allotments"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Returns number of available allotments",
+				"parameters": [{
+						"name": "productId",
+						"in": "query",
+						"description": "Product identifier",
+						"schema": {
+							"type": "integer"
+						},
+						"required": true
+					},
+					{
+						"name": "date",
+						"in": "query",
+						"description": "Allotment date",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					},
+					{
+						"name": "purchaseId",
+						"in": "query",
+						"description": "Purchase identifier",
+						"schema": {
+							"type": "integer"
+						},
+						"required": true
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Number of available allotments",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/allotments/overbooked": {
+			"get": {
+				"tags": [
+					"allotments"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Checks if specified days are overbooked",
+				"parameters": [{
+						"name": "productId",
+						"in": "query",
+						"description": "Product identifier",
+						"schema": {
+							"type": "integer"
+						},
+						"required": true
+					},
+					{
+						"name": "date",
+						"in": "query",
+						"description": "Allotment date",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					},
+					{
+						"name": "startDate",
+						"in": "query",
+						"description": "Start date of check",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					},
+					{
+						"name": "endDate",
+						"in": "query",
+						"description": "End date of check",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					},
+					{
+						"name": "purchaseId",
+						"in": "query",
+						"description": "Purchase identifier",
+						"schema": {
+							"type": "number"
+						},
+						"required": true
+					},
+					{
+						"name": "total",
+						"in": "query",
+						"description": "If number of allotments for the date is more than total, it will be reported",
+						"schema": {
+							"type": "integer"
+						},
+						"required": true
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Overbooked status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/products": {
+			"get": {
+				"tags": [
+					"products"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Return products according to filters",
+				"parameters": [{
+						"name": "sortby",
+						"description": "Search results order",
+						"in": "query",
+						"schema": {
+							"type": "integer"
+						}
+					},
+					{
+						"name": "typeCodes",
+						"description": "Specified type codes",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"$ref": "#/components/parameters/limit"
+					},
+					{
+						"$ref": "#/components/parameters/page"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Products search result",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Product"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"tags": [
+					"products"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Create product",
+				"requestBody": {
+					"description": "Product description",
+					"content": {
+						"application/json": {
+							"schema": {
+								"title": "",
+								"properties": {
+									"name": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Created product identifier",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APICreatedEntityResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/products/order": {
+			"put": {
+				"tags": [
+					"products"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Updates sorting order of products",
+				"responses": {
+					"200": {
+						"description": "Operation status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/products/types": {
+			"get": {
+				"tags": [
+					"products"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Returns product types",
+				"responses": {
+					"200": {
+						"description": "Product types",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/ProductType"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/products/{productId}": {
+			"get": {
+				"tags": [
+					"products"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Return product",
+				"parameters": [{
+					"name": "productId",
+					"description": "Product identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"responses": {
+					"200": {
+						"description": "Product",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Product"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			},
+			"put": {
+				"tags": [
+					"products"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Update product",
+				"parameters": [{
+					"name": "productId",
+					"description": "Product identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"requestBody": {
+					"description": "Product photos",
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"title": "",
+								"properties": {}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Operation status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"tags": [
+					"products"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Delete product",
+				"parameters": [{
+					"name": "productId",
+					"description": "Product identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"responses": {
+					"200": {
+						"description": "Operation status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/responses/APISuccessResponse"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/products/{productId}/tourPricing": {
+			"get": {
+				"tags": [
+					"products"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Return tour pricing for product",
+				"parameters": [{
+						"name": "productId",
+						"description": "Product identifier",
+						"in": "path",
+						"schema": {
+							"type": "integer"
+						},
+						"required": true
+					},
+					{
+						"name": "date",
+						"description": "Requested date",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					},
+					{
+						"name": "bookingPartnerId",
+						"description": "Booking partner identifier",
+						"in": "query",
+						"schema": {
+							"type": "integer"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Tour pricing",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/products/{productId}/miscPricing": {
+			"get": {
+				"tags": [
+					"products"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Return miscellaneous pricing for product",
+				"parameters": [{
+					"name": "productId",
+					"description": "Product identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"responses": {
+					"200": {
+						"description": "Misc pricing",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/products/{productId}/seasons": {
+			"get": {
+				"tags": [
+					"products"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Returns price seasons for specific product",
+				"parameters": [{
+					"name": "productId",
+					"description": "Product identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"responses": {
+					"200": {
+						"description": "Price seasons list",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			},
+			"put": {
+				"tags": [
+					"products"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Updates price seasons for specific product",
+				"parameters": [{
+					"name": "productId",
+					"description": "Product identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"responses": {
+					"200": {
+						"description": "Operation status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/bookingPartners": {
+			"get": {
+				"tags": [
+					"bookingPartners"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Returns booking partners according to filters",
+				"parameters": [{
+						"name": "bookingPartnerId",
+						"description": "Booking partner identifier",
+						"in": "query",
+						"schema": {
+							"type": "number"
+						}
+					},
+					{
+						"name": "name",
+						"description": "Name filter",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "reservationConfirmEmail",
+						"description": "Reservation confirm email filter",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "commissionLevel",
+						"description": "Commission level",
+						"in": "query",
+						"schema": {
+							"type": "number"
+						}
+					},
+					{
+						"name": "sortBy",
+						"description": "Sorted column",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"$ref": "#/components/parameters/limit"
+					},
+					{
+						"$ref": "#/components/parameters/page"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Booking partners search result",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/BookingPartner"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			},
+			"post": {
+				"tags": [
+					"bookingPartners"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Create booking partner",
+				"requestBody": {
+					"description": "Booking partner description",
+					"content": {
+						"application/json": {
+							"schema": {
+								"title": "",
+								"properties": {
+									"reservationConfirmEmail": {
+										"type": "string"
+									},
+									"paymentDueTerm": {
+										"type": "string"
+									},
+									"balanceDueDays": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"myob": {
+										"type": "string"
+									},
+									"commissionLevel": {
+										"type": "integer"
+									},
+									"contactFirstname": {
+										"type": "string"
+									},
+									"contactLastname": {
+										"type": "string"
+									},
+									"contactEmail": {
+										"type": "string"
+									},
+									"address": {
+										"type": "string"
+									},
+									"city": {
+										"type": "string"
+									},
+									"state": {
+										"type": "string"
+									},
+									"postcode": {
+										"type": "string"
+									},
+									"country": {
+										"type": "string"
+									},
+									"phone": {
+										"type": "string"
+									},
+									"fax": {
+										"type": "string"
+									},
+									"website": {
+										"type": "string"
+									},
+									"emailConfirmation": {
+										"type": "string"
+									},
+									"reservationPhone": {
+										"type": "string"
+									},
+									"reservationEmail": {
+										"type": "string"
+									},
+									"blackoutPhone": {
+										"type": "string"
+									},
+									"blackoutEmail": {
+										"type": "string"
+									},
+									"paymentMethod": {
+										"type": "string"
+									},
+									"adultPrice": {
+										"type": "string"
+									},
+									"childPrice": {
+										"type": "string"
+									},
+									"familyPrice": {
+										"type": "string"
+									},
+									"familyAdditionalRiderPrice": {
+										"type": "string"
+									},
+									"layout": {
+										"type": "string"
+									},
+									"printedForm": {
+										"type": "string"
+									},
+									"bookingPartnerNotes": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Created booking partner identifier",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APICreatedEntityResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/bookingPartners/{bookingPartnerId}": {
+			"get": {
+				"tags": [
+					"bookingPartners"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Return booking partner",
+				"parameters": [{
+					"name": "bookingPartnerId",
+					"description": "Booking partner identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"responses": {
+					"200": {
+						"description": "Booking partner",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/BookingPartner"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			},
+			"put": {
+				"tags": [
+					"bookingPartners"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Update booking partner",
+				"parameters": [{
+					"name": "bookingPartnerId",
+					"description": "Booking partner identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"requestBody": {
+					"description": "Booking partner description",
+					"content": {
+						"application/json": {
+							"schema": {
+								"title": "",
+								"properties": {
+									"reservationConfirmEmail": {
+										"type": "string"
+									},
+									"paymentDueTerm": {
+										"type": "string"
+									},
+									"balanceDueDays": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"myob": {
+										"type": "string"
+									},
+									"commissionLevel": {
+										"type": "integer"
+									},
+									"contactFirstname": {
+										"type": "string"
+									},
+									"contactLastname": {
+										"type": "string"
+									},
+									"contactEmail": {
+										"type": "string"
+									},
+									"address": {
+										"type": "string"
+									},
+									"city": {
+										"type": "string"
+									},
+									"state": {
+										"type": "string"
+									},
+									"postcode": {
+										"type": "string"
+									},
+									"country": {
+										"type": "string"
+									},
+									"phone": {
+										"type": "string"
+									},
+									"fax": {
+										"type": "string"
+									},
+									"website": {
+										"type": "string"
+									},
+									"emailConfirmation": {
+										"type": "string"
+									},
+									"reservationPhone": {
+										"type": "string"
+									},
+									"reservationEmail": {
+										"type": "string"
+									},
+									"blackoutPhone": {
+										"type": "string"
+									},
+									"blackoutEmail": {
+										"type": "string"
+									},
+									"paymentMethod": {
+										"type": "string"
+									},
+									"adultPrice": {
+										"type": "string"
+									},
+									"childPrice": {
+										"type": "string"
+									},
+									"familyPrice": {
+										"type": "string"
+									},
+									"familyAdditionalRiderPrice": {
+										"type": "string"
+									},
+									"layout": {
+										"type": "string"
+									},
+									"printedForm": {
+										"type": "string"
+									},
+									"bookingPartnerNotes": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Operation status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			},
+			"delete": {
+				"tags": [
+					"bookingPartners"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Delete booking partner",
+				"parameters": [{
+					"name": "bookingPartnerId",
+					"description": "Booking partner identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"responses": {
+					"200": {
+						"description": "Operation status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/responses/APISuccessResponse"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/bookingPartners/{bookingPartnerId}/commission": {
+			"get": {
+				"tags": [
+					"bookingPartners"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Booking partner commission",
+				"parameters": [{
+					"name": "bookingPartnerId",
+					"description": "Booking partner identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"responses": {
+					"200": {
+						"description": "Commission information",
+						"content": {
+							"application/json": {
+								"schema": {
+									"title": "",
+									"properties": {
+										"commission": {
+											"type": "string"
+										},
+										"email": {
+											"type": "string"
+										},
+										"bookingRefID": {
+											"type": "string"
+										},
+										"bookingPartnerNotes": {
+											"type": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/bookingPartners/{bookingPartnerId}/purchases": {
+			"get": {
+				"tags": [
+					"bookingPartners"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Booking partner purchases",
+				"parameters": [{
+						"name": "bookingPartnerId",
+						"description": "Booking partner identifier",
+						"in": "path",
+						"schema": {
+							"type": "integer"
+						},
+						"required": true
+					},
+					{
+						"$ref": "#/components/parameters/limit"
+					},
+					{
+						"$ref": "#/components/parameters/page"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Booking partner purchases",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/BookingPartnerPurchase"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/emailTemplates": {
+			"get": {
+				"tags": [
+					"emailTemplates"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"parameters": [{
+					"name": "archived",
+					"description": "Specifies if archived email templates are queried as well",
+					"in": "query",
+					"schema": {
+						"type": "string"
+					}
+
+				}],
+				"summary": "Email templates",
+				"responses": {
+					"200": {
+						"description": "Email templates",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/EmailTemplate"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/emailTemplates/{id}": {
+			"put": {
+				"tags": [
+					"emailTemplates"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Update email template",
+				"parameters": [{
+					"name": "id",
+					"description": "Email template identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"requestBody": {
+					"description": "Email description",
+					"content": {
+						"application/json": {
+							"schema": {
+								"title": "",
+								"properties": {
+									"templateCode": {
+										"type": "string"
+									},
+									"title": {
+										"type": "string"
+									},
+									"standardText": {
+										"type": "string"
+									},
+									"customerText": {
+										"type": "string"
+									},
+									"tourOperatorText": {
+										"type": "string"
+									},
+									"voucherText": {
+										"type": "string"
+									},
+									"subject": {
+										"type": "string"
+									},
+									"sendFrom": {
+										"type": "string"
+									},
+									"filename": {
+										"type": "string"
+									},
+									"originalFilename": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Operation status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			},
+			"delete": {
+				"tags": [
+					"emailTemplates"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Delete email template",
+				"parameters": [{
+					"name": "id",
+					"description": "Email template identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"responses": {
+					"200": {
+						"description": "Operation status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/emailTemplates/{emailTemplateId}/preview": {
+			"get": {
+				"tags": [
+					"emailTemplates"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Preview email template",
+				"parameters": [{
+					"name": "emailTemplateId",
+					"description": "Email template identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"responses": {
+					"200": {
+						"description": "Rendered template",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/broadcasts": {
+			"get": {
+				"tags": [
+					"broadcasts"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Broadcast emails",
+				"parameters": [{
+						"name": "from",
+						"description": "Sent date from",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					},
+					{
+						"name": "to",
+						"description": "Sent date to",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					},
+					{
+						"name": "emailTo",
+						"description": "Recipient",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "subject",
+						"description": "Subject",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "userId",
+						"description": "User identifier",
+						"in": "query",
+						"schema": {
+							"type": "integer"
+						}
+					},
+					{
+						"name": "travelagency",
+						"description": "Travel agency",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"$ref": "#/components/parameters/limit"
+					},
+					{
+						"$ref": "#/components/parameters/page"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "List of emails",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/BroadcastEmail"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"tags": [
+					"broadcasts"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Create broadcast email",
+				"requestBody": {
+					"description": "Broadcast email description",
+					"content": {
+						"application/json": {
+							"schema": {
+								"title": "",
+								"properties": {
+									"templateCode": {
+										"type": "string"
+									},
+									"templateCode2": {
+										"type": "string"
+									},
+									"subject": {
+										"type": "string"
+									},
+									"body": {
+										"type": "string"
+									},
+									"internalNotes": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Operation status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APICreatedEntityResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/broadcasts/{emailId}": {
+			"put": {
+				"tags": [
+					"broadcasts"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Update broadcast email",
+				"parameters": [{
+					"name": "emailId",
+					"description": "Broadcast email identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"requestBody": {
+					"description": "Broadcast description",
+					"content": {
+						"application/json": {
+							"schema": {
+								"title": "",
+								"properties": {
+									"emailID": {
+										"type": "string"
+									},
+									"sendFrom": {
+										"type": "string"
+									},
+									"subject": {
+										"type": "string"
+									},
+									"message": {
+										"type": "string"
+									},
+									"internalNotes": {
+										"type": "string"
+									},
+									"setupDate": {
+										"type": "string"
+									},
+									"totalSent": {
+										"type": "integer"
+									},
+									"setupUserID": {
+										"type": "integer"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Operation status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			},
+			"delete": {
+				"tags": [
+					"broadcasts"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Delete broadcast email",
+				"parameters": [{
+					"name": "emailId",
+					"description": "Broadcast email identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"responses": {
+					"200": {
+						"description": "Operation status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/broadcasts/{emailId}/send": {
+			"post": {
+				"tags": [
+					"broadcasts"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Send broadcast email",
+				"parameters": [{
+					"name": "emailId",
+					"description": "Broadcast email identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"responses": {
+					"200": {
+						"description": "Operation status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APISuccessResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/broadcasts/{emailId}/attachments": {
+			"post": {
+				"tags": [
+					"broadcasts"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Add attachment to the broadcast email",
+				"parameters": [{
+					"name": "emailId",
+					"description": "Broadcast email identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"responses": {
+					"200": {
+						"description": "Operation status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APICreatedEntityResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/broadcasts/attachments/{attachmentId}": {
+			"delete": {
+				"tags": [
+					"broadcasts"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Delete attachment from the broadcast email",
+				"parameters": [{
+					"name": "attachmentId",
+					"description": "Attachment identifier",
+					"in": "path",
+					"schema": {
+						"type": "integer"
+					},
+					"required": true
+				}],
+				"responses": {
+					"200": {
+						"description": "Operation status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/APICreatedEntityResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/APIUnauthorizedResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/APINotFoundResponse"
+					}
+				}
+			}
+		},
+		"/reports/monthByMonth": {
+			"get": {
+				"tags": [
+					"reports"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Month by month sales report",
+				"responses": {
+					"200": {
+						"description": "Sales report",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/MonthByMonthSalesReport"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/reports/payments": {
+			"get": {
+				"tags": [
+					"reports"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Payments sales report",
+				"parameters": [{
+						"name": "from",
+						"description": "Date start",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					},
+					{
+						"name": "to",
+						"description": "Date end",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					},
+					{
+						"name": "city",
+						"description": "Tour city",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Sales report",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/PaymentSalesReport"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/reports/payments/export": {
+			"get": {
+				"tags": [
+					"reports"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Payments sales report exported",
+				"parameters": [{
+						"name": "from",
+						"description": "Date start",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					},
+					{
+						"name": "to",
+						"description": "Date end",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					},
+					{
+						"name": "city",
+						"description": "Tour city",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Sales report",
+						"content": {
+							"text/csv": {
+								"schema": {
+									"$ref": "#/components/schemas/PaymentSalesReportExported"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/reports/future": {
+			"get": {
+				"tags": [
+					"reports"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Future sales report",
+				"parameters": [{
+					"name": "city",
+					"description": "Tour city",
+					"in": "query",
+					"schema": {
+						"type": "string"
+					}
+				}],
+				"responses": {
+					"200": {
+						"description": "Sales report",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/FutureSalesReport"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/reports/future/export": {
+			"get": {
+				"tags": [
+					"reports"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Future sales report exported",
+				"parameters": [{
+					"name": "city",
+					"description": "Tour city",
+					"in": "query",
+					"schema": {
+						"type": "string"
+					}
+				}],
+				"responses": {
+					"200": {
+						"description": "Sales report",
+						"content": {
+							"text/csv": {
+								"schema": {
+									"$ref": "#/components/schemas/FutureSalesExported"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/reports/finance": {
+			"get": {
+				"tags": [
+					"reports"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Finance sales report",
+				"parameters": [{
+						"name": "from",
+						"description": "Date start",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					},
+					{
+						"name": "to",
+						"description": "Date end",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					},
+					{
+						"name": "city",
+						"description": "City",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "status",
+						"description": "Status",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "famils",
+						"description": "Famils",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "travelagency",
+						"description": "Travel agency",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Sales report",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/FinanceSalesReport"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/reports/finance/export": {
+			"get": {
+				"tags": [
+					"reports"
+				],
+				"security": [{
+					"api_key": []
+				}],
+				"summary": "Finance sales report exported",
+				"parameters": [{
+						"name": "from",
+						"description": "Date start",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					},
+					{
+						"name": "to",
+						"description": "Date end",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					},
+					{
+						"name": "city",
+						"description": "City",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "status",
+						"description": "Status",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Sales report",
+						"content": {
+							"text/csv": {
+								"schema": {
+									"$ref": "#/components/schemas/FinanceSalesReportExported"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"responses": {
+			"PurchaseHistory": {
+				"description": "Purchase payments and refunds history with overall balance",
+				"content": {
+					"application/json": {
+						"schema": {
+							"properties": {
+								"totalNet": {
+									"type": "number"
+								},
+								"history": {
+									"type": "array",
+									"items": {
+										"properties": {
+											"chargeID": {
+												"type": "number"
+											},
+											"purchaseID": {
+												"type": "number"
+											},
+											"paymentDate": {
+												"type": "string"
+											},
+											"type": {
+												"type": "string"
+											},
+											"amount": {
+												"type": "number"
+											},
+											"method": {
+												"type": "string"
+											},
+											"internalNotes": {
+												"type": "string"
+											},
+											"refundReason": {
+												"type": "string"
+											},
+											"addedStaff": {
+												"type": "number"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"APISuccessResponse": {
+				"description": "Operation was completed successfully",
+				"content": {
+					"application/json": {
+						"schema": {
+							"properties": {
+								"status": {
+									"type": "string"
+								},
+								"message": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"APIErrorResponse": {
+				"description": "Operation did not complete successfully",
+				"content": {
+					"application/json": {
+						"schema": {
+							"properties": {
+								"status": {
+									"type": "string"
+								},
+								"errorType": {
+									"type": "string"
+								},
+								"errorMessage": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"APIUnauthorizedResponse": {
+				"description": "Authorize in order to access the resource",
+				"content": {
+					"application/json": {
+						"schema": {
+							"properties": {
+								"status": {
+									"type": "string"
+								},
+								"errorType": {
+									"type": "string"
+								},
+								"errorMessage": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"APINotFoundResponse": {
+				"description": "Requested resource was not found",
+				"content": {
+					"application/json": {
+						"schema": {
+							"properties": {
+								"status": {
+									"type": "string"
+								},
+								"errorType": {
+									"type": "string"
+								},
+								"errorMessage": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"APICreatedEntityResponse": {
+				"description": "Returning identifier of created entity",
+				"content": {
+					"application/json": {
+						"schema": {
+							"properties": {
+								"id": {
+									"type": "integer"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"parameters": {
+			"id": {
+				"name": "id",
+				"in": "path",
+				"description": "Specifies item system identifier",
+				"schema": {
+					"type": "integer"
+				},
+				"required": true,
+				"style": "simple"
+			},
+			"limit": {
+				"name": "limit",
+				"in": "query",
+				"description": "Specifies maximum number of fetched items",
+				"schema": {
+					"type": "integer"
+				}
+			},
+			"page": {
+				"name": "page",
+				"in": "query",
+				"description": "Specifies page of fetched items (offsetting)",
+				"schema": {
+					"type": "integer"
+				}
+			}
+		},
+		"schemas": {
+			"MonthByMonthSalesReport": {
+				"properties": {
+					"id": {
+						"type": "integer"
+					}
+				}
+			},
+			"FinanceSalesReport": {
+				"properties": {
+					"id": {
+						"type": "integer"
+					}
+				}
+			},
+			"FinanceSalesReportExported": {
+				"properties": {
+					"id": {
+						"type": "integer"
+					}
+				}
+			},
+			"FutureSalesReport": {
+				"properties": {
+					"id": {
+						"type": "integer"
+					}
+				}
+			},
+			"FutureSalesExported": {
+				"properties": {
+					"id": {
+						"type": "integer"
+					}
+				}
+			},
+			"PaymentSalesReport": {
+				"properties": {
+					"id": {
+						"type": "integer"
+					}
+				}
+			},
+			"PaymentSalesReportExported": {
+				"properties": {
+					"id": {
+						"type": "integer"
+					}
+				}
+			},
+			"BroadcastEmail": {
+				"properties": {
+					"id": {
+						"type": "integer"
+					}
+				}
+			},
+			"EmailTemplate": {
+				"properties": {
+					"id": {
+						"type": "integer"
+					}
+				}
+			},
+			"ProductType": {
+				"properties": {
+					"typeId": {
+						"type": "integer"
+					},
+					"name": {
+						"type": "string"
+					}
+				}
+			},
+			"Product": {
+				"properties": {
+					"productId": {
+						"type": "integer"
+					},
+					"name": {
+						"type": "string"
+					}
+				}
+			},
+			"BookingPartner": {
+				"properties": {
+					"bookingPartnerId": {
+						"type": "integer"
+					},
+					"name": {
+						"type": "string"
+					},
+					"myob": {
+						"type": "integer"
+					},
+					"reservationConfirmEmail": {
+						"type": "string"
+					},
+					"commissionLevel": {
+						"type": "integer"
+					},
+					"paymentMethod": {
+						"type": "string"
+					},
+					"paymentDueTerm": {
+						"type": "integer"
+					}
+				}
+			},
+			"Purchase": {
+				"properties": {
+					"purchaseID": {
+						"type": "integer"
+					},
+					"status": {
+						"type": "string"
+					},
+					"tourDate": {
+						"type": "string"
+					},
+					"travelerLastname": {
+						"type": "string"
+					},
+					"productName": {
+						"type": "string"
+					},
+					"totalGuest": {
+						"type": "integer"
+					},
+					"outstanding": {
+						"type": "number"
+					},
+					"bookingPartnerName": {
+						"type": "string"
+					},
+					"noOfAdult": {
+						"type": "integer"
+					},
+					"noOfChildren": {
+						"type": "integer"
+					},
+					"noOfFamilyGroups": {
+						"type": "integer"
+					},
+					"totalNet": {
+						"type": "number"
+					},
+					"firstname": {
+						"type": "string"
+					},
+					"lastname": {
+						"type": "string"
+					}
+				}
+			},
+			"BookingPartnerPurchase": {
+				"properties": {
+					"status": {
+						"type": "string"
+					},
+					"tourDate": {
+						"type": "string"
+					},
+					"travelerLastname": {
+						"type": "string"
+					},
+					"productName": {
+						"type": "string"
+					},
+					"totalGuest": {
+						"type": "integer"
+					},
+					"outstanding": {
+						"type": "string"
+					},
+					"bookingPartnerName": {
+						"type": "string"
+					},
+					"firstname": {
+						"type": "string"
+					},
+					"lastname": {
+						"type": "string"
+					},
+					"noOfAdult": {
+						"type": "integer"
+					},
+					"noOfChildren": {
+						"type": "integer"
+					},
+					"noOfFamilyGroups": {
+						"type": "integer"
+					},
+					"noOfAdditionals": {
+						"type": "integer"
+					},
+					"purchaseDate": {
+						"type": "string"
+					}
+				}
+			},
+			"User": {
+				"properties": {
+					"userId": {
+						"type": "integer"
+					},
+					"lastname": {
+						"type": "string"
+					},
+					"firstname": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"accessLevel": {
+						"type": "string"
+					}
+				}
+			},
+			"ApplicationSetting": {
+				"properties": {
+					"id": {
+						"type": "integer"
+					},
+					"key": {
+						"type": "string"
+					},
+					"value": {
+						"type": "string"
+					}
+				}
+			},
+			"AuthRequest": {
+				"type": "object",
+				"properties": {
+					"login": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				}
+			}
+		}
+	}
+}

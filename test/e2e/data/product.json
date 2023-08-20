@@ -1,0 +1,21 @@
+{
+    "name": "Test product",
+    "typeCode": "TOURS",
+    "isAvailable": "Y",
+    "templateCode": "BRIDGE-CONF",
+    "tourOperatorEmail": "test@email.com",
+    "cutoff": "123",
+    "minGuestNo": "2",
+    "basePrice": 123,
+    "childPrice": 123,
+    "familyRate": 123,
+    "additionalRate": 123,
+    "employeePrice": 123,
+    "availabilityMon": "15:15:00",
+    "availabilityTue": "15:15:00",
+    "availabilityWed": "15:15:00",
+    "availabilityThu": "15:15:00",
+    "availabilityFri": "15:15:00",
+    "availabilitySat": "15:15:00",
+    "availabilitySun": "15:15:00"
+}

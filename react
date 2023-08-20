@@ -1,0 +1,4 @@
+Wed, 18 Nov 2020 22:07:19 GMT express-session deprecated undefined saveUninitialized option; provide saveUninitialized option at server.js:70:5
+(node:22497) Warning: N-API is an experimental feature and could change at any time.
+Thu, 19 Nov 2020 16:16:09 GMT express-session deprecated undefined saveUninitialized option; provide saveUninitialized option at server.js:70:5
+(node:11114) Warning: N-API is an experimental feature and could change at any time.

@@ -1,0 +1,12 @@
+{
+    "purchaseDate": "28-01-2019",
+    "products": [{
+        "productId": 71,
+        "price": 2.00,
+        "qty": 6
+    }, {
+        "productId": 81,
+        "price": 4.00,
+        "qty": 70
+    }]
+}

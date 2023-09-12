@@ -68,7 +68,7 @@ router.put(`/products/:id`, (req, res) => {
         res.send({ status: `success` });
     }).catch(error => {
         utils.handleError(res, error);
-        
+
     });
 });
 

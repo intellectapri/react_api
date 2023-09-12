@@ -34,9 +34,9 @@ const createSchema = Joi.object().keys({
 
 /**
  * Returns purchase with specific identifier
- * 
+ *
  * @param {Number} id Purchase identifier
- * 
+ *
  * @returns {Promise}
  */
 const find = (id) => {
@@ -61,7 +61,7 @@ const find = (id) => {
 
 /**
  * Returns all purchases
- * 
+ *
  * @returns {Promise}
  */
 const findAll = () => {
@@ -82,9 +82,9 @@ const findAll = () => {
 
 /**
  * Recalculates total purchase price
- * 
+ *
  * @param {Number} id Purchase identifier
- * 
+ *
  *  @returns {Promise}
  */
 const recalculateTotal = (id) => {
@@ -139,9 +139,9 @@ const recalculateTotal = (id) => {
 
 /**
  * Generates values population clauses
- * 
+ *
  * @param {Object} data Item details
- * 
+ *
  * @returns {String}
  */
 const generatePopulateValuesClauses = (data) => {
@@ -174,9 +174,9 @@ const generatePopulateValuesClauses = (data) => {
 
 /**
  * Returns purchase
- * 
+ *
  * @param {String} purchaseId Purchase identifier
- * 
+ *
  * @returns {Promise}
  */
 const getPurchase = (purchaseId) => {
@@ -200,9 +200,9 @@ const getPurchase = (purchaseId) => {
 
 /**
  * Returns tour purchase
- * 
+ *
  * @param {String} purchaseId Purchase identifier
- * 
+ *
  * @returns {Promise}
  */
 const getTourPurchase = (purchaseId) => {
@@ -256,12 +256,12 @@ const getTourPurchase = (purchaseId) => {
                                             reject(err);
                                         }
                                         data.product = product[0];
-                                        
+
                                         data.locked = locked;
 
                                         resolve(data);
                                     })
-                                    
+
                                 }
                             });
                         }
@@ -278,9 +278,9 @@ const getTourPurchase = (purchaseId) => {
 
 /**
  * Returns misc purchase
- * 
+ *
  * @param {String} purchaseId Purchase identifier
- * 
+ *
  * @returns {Promise}
  */
 const getMiscPurchase = (purchaseId) => {
@@ -357,10 +357,10 @@ const getMiscPurchase = (purchaseId) => {
 
 /**
  * Creates purchase
- * 
+ *
  * @param {Object} data   Purchase information
  * @param {Number} userId User identifier
- * 
+ *
  * @returns {Promise}
  */
 const create = (data, userId) => {
@@ -370,7 +370,7 @@ const create = (data, userId) => {
         Joi.validate(data, createSchema).then(() => {
             let valueClausesSQL = generatePopulateValuesClauses(data);
             let sql = `INSERT INTO purchase SET enteredBy = ${userId}, enteredAt = NOW(), purchaseDate = ${data.purchaseDate ? `'${data.purchaseDate}'` : `NOW()`} ${valueClausesSQL}`;
-            
+
             db.get().execute(sql, (err, results) => {
                 if (err) {
                     reject(err);
@@ -386,9 +386,9 @@ const create = (data, userId) => {
 
 /**
  * Deletes misc purchase
- * 
+ *
  * @param {String} purchaseId Purchase identifier
- * 
+ *
  * @returns {Promise}
  */
 const deleteMiscPurchase = (purchaseId, userId) => {
@@ -437,10 +437,10 @@ const deleteMiscPurchase = (purchaseId, userId) => {
 
 /**
  * Updates purchase
- * 
+ *
  * @param {Object} data   Purchase information
  * @param {Number} userId User identifier
- * 
+ *
  * @returns {Promise}
  */
 const update = (data, userId) => {
@@ -464,9 +464,9 @@ const update = (data, userId) => {
 
 /**
  * Calculates total number of found records
- * 
+ *
  * @param {Array} data Filters
- * 
+ *
  * @returns {Integer}
  */
 const searchTotal = (data, {additionalJoinQuery, additionalWhereQuery}) => {
@@ -478,7 +478,7 @@ const searchTotal = (data, {additionalJoinQuery, additionalWhereQuery}) => {
         if (data.purchaseTour || (!data.purchaseMisc || parseInt(data.purchaseMisc) === 0)) {
             purchaseTypeTour = ` OR t.purchaseType = 'tour' `;
         }
-    
+
         let purchaseTypeMisc = ``;
         if (data.purchaseMisc || (!data.purchaseTour || parseInt(data.purchaseTour) === 0)) {
             purchaseTypeMisc = ` OR t.purchaseType = 'misc' `;
@@ -488,7 +488,7 @@ const searchTotal = (data, {additionalJoinQuery, additionalWhereQuery}) => {
             SELECT ppp.* FROM (
                 SELECT p.purchaseID
                 FROM purchase p
-                INNER JOIN (${searchSQL}) t ON t.purchaseID = p.purchaseID						
+                INNER JOIN (${searchSQL}) t ON t.purchaseID = p.purchaseID
                 LEFT JOIN customer cust ON cust.customerID = p.customerID
                 LEFT JOIN user u ON u.userID = p.enteredBy
                 WHERE true AND (t.purchaseType = 'tourmisc' ${purchaseTypeTour} ${purchaseTypeMisc}) ${mainSearchSQL}
@@ -510,9 +510,9 @@ const searchTotal = (data, {additionalJoinQuery, additionalWhereQuery}) => {
 
 /**
  * Searches in purchases according to provided filters
- * 
+ *
  * @param {Object} data Filters
- * 
+ *
  * @returns {Promise}
  */
 const search = (data) => {
@@ -551,16 +551,16 @@ const search = (data) => {
         if (data.sortBy === `totalGuest`) outerSortBy = ` ORDER BY totalGuest ${selectOrder} `;
 
         let selectLimitOffsetClause = ` ${selectSortByClause} LIMIT ${selectLimit} OFFSET ${selectOffset}`;
-    
+
         let selectSearchSQL = queryFormatters.getSearchSQL(data);
         let selectPrimarySearchSQL = queryFormatters.getSearchSQL(data);
         let whereClauseSQL = queryFormatters.getMainSearchSQL(data);
-        
+
         let purchaseTypeTour = ``;
         if (data.purchaseTour || (!data.purchaseMisc || parseInt(data.purchaseMisc) === 0)) {
             purchaseTypeTour = ` OR t.purchaseType = 'tour' `;
         }
-    
+
         let purchaseTypeMisc = ``;
         if (data.purchaseMisc || (!data.purchaseTour || parseInt(data.purchaseTour) === 0)) {
             purchaseTypeMisc = ` OR t.purchaseType = 'misc' `;
@@ -576,7 +576,7 @@ const search = (data) => {
         if (data.bookingRefId) additionalWhereQueries.push(` extra_search.bookingRefID LIKE '%${data.bookingRefId}%' `);
         if (data.travelagency) additionalWhereQueries.push(` extra_search.travelAgency LIKE '%${data.travelagency}%' `);
         // if( data.voucherIDs) {
-            
+
         //     additionalWhereQueries.push(` extra_search.voucherIDs LIKE '%${data.voucherIDs}%' `);
         // }
         if (additionalWhereQueries.length > 0) {
@@ -612,7 +612,7 @@ const search = (data) => {
                     LEFT JOIN customer cust ON cust.customerID = p.customerID
                     WHERE true AND (t.purchaseType = 'tourmisc' ${purchaseTypeTour} ${purchaseTypeMisc}) ${whereClauseSQL}
                     GROUP BY p.purchaseID
-                ) AS ppp 
+                ) AS ppp
 
                 ${additionalJoinQuery}
                 ${additionalWhereQuery}
@@ -645,10 +645,10 @@ const search = (data) => {
 
 /**
  * Checks if specified date is booked for specific product
- * 
+ *
  * @param {Number} productId Checked product identifier
  * @param {String} date      Checked date
- * 
+ *
  * @returns {Promise}
  */
 const isBookedDate = (productId, date) => {
@@ -677,7 +677,7 @@ const isBookedDate = (productId, date) => {
 
 /**
  * Searches for all purchases of the specific customer
- * 
+ *
  * @param {Number} id     Customer identifier
  * @param {Object} parmss Selection parameters
  */
@@ -691,7 +691,7 @@ const findAllByCustomerId = (id, params) => {
                 pt.family, prod.name AS name
                 FROM purchase_tour pt
                 INNER JOIN product prod ON prod.productID = pt.productID
-                UNION 
+                UNION
                 SELECT detailID, purchaseID, '' AS status, productID, purchaseType, '' AS tourDate, '' AS noOfAdult, '' AS noOfChildren,
                     '' AS noOfFamilyGroups, '' AS noOfAddChildren, '' AS noOfAdditionals, '' AS family, GROUP_CONCAT(name SEPARATOR ', ') AS name
                 FROM (

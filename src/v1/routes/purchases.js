@@ -94,13 +94,13 @@ router.put(`/purchases/tours/:id`, (req, res) => {
     let data = req.body;
     data.purchaseId = parseInt(data.purchaseId);
     data.detailId = parseInt(req.params.id);
-    
+
     tourPurchases.update(data, req.session.user.userId).then(() => {
         res.send({ status: 'success' });
     }).catch(error => {
         utils.handleError(res, error);
     });
-    
+
 });
 
 router.post(`/purchases/misc`, (req, res) => {

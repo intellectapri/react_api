@@ -55,7 +55,7 @@ const prepareProduct = (product) => {
 
 /**
  * Return existing product types
- * 
+ *
  * @returns {Promise}
  */
 const getTypes = () => {
@@ -72,7 +72,7 @@ const getTypes = () => {
 
 /**
  * Return existing products
- * 
+ *
  * @returns {Promise}
  */
 const list = (data = {}) => {
@@ -94,7 +94,7 @@ const list = (data = {}) => {
             INNER JOIN product_type pt ON pt.typeCode = p.typeCode
             ${whereClause}
             ORDER BY p.typeCode, p.city, p.displayOrder`;
-        
+
         db.get().execute(sql, (err, results) => {
             if (err) {
                 reject(err.message);
@@ -112,9 +112,9 @@ const list = (data = {}) => {
 
 /**
  * Return specific product
- * 
+ *
  * @param {Number} productId Product identifier
- * 
+ *
  * @returns {Promise}
  */
 const get = (productId) => {
@@ -137,9 +137,9 @@ const get = (productId) => {
 
 /**
  * Generates value SQL statements
- * 
+ *
  * @param {Object} data Product information
- * 
+ *
  * @return {Array}
  */
 const generateValueStatements = (data) => {
@@ -172,9 +172,9 @@ const generateValueStatements = (data) => {
 
 /**
  * Create product
- * 
+ *
  * @param {Object} data Product information
- * 
+ *
  * @returns {Promise}
  */
 const create = (data) => {
@@ -197,16 +197,16 @@ const create = (data) => {
 
 /**
  * Update product
- * 
+ *
  * @param {Number} productId Product identifier
  * @param {Object} data      Product information
- * 
+ *
  * @returns {Promise}
  */
 const update = (productId, data) => {
     return new Promise((resolve, reject) => {
         if (productId > 0) {
-            
+
             Joi.validate(data, schema).then(() => {
                 let valuesClauses = generateValueStatements(data);
                 let sql = `UPDATE product SET ${valuesClauses.join(` , `)} WHERE productID = ${productId}`;
@@ -228,9 +228,9 @@ const update = (productId, data) => {
 
 /**
  * Update sorting order of products
- * 
+ *
  * @param {Array} order Sorting order data
- * 
+ *
  * @returns {Promise}
  */
 const updateOrder = (order) => {
@@ -247,7 +247,7 @@ const updateOrder = (order) => {
                     }
                 });
             });
-            
+
             promises.push(localPromise);
         }
 
@@ -257,9 +257,9 @@ const updateOrder = (order) => {
 
 /**
  * Delete the product
- * 
+ *
  * @param {Number} productId Product identifier
- * 
+ *
  * @returns {Promise}
  */
 const deleteProduct = (productId) => {
@@ -280,9 +280,9 @@ const deleteProduct = (productId) => {
 
 /**
  * Restore the product
- * 
+ *
  * @param {Number} productId Product identifier
- * 
+ *
  * @returns {Promise}
  */
 const restoreProduct = (productId) => {
@@ -303,10 +303,10 @@ const restoreProduct = (productId) => {
 
 /**
  * Gets season prices for specific date
- * 
+ *
  * @param {Object} product Product description
  * @param {String} date    Requested date
- * 
+ *
  * @returns {Promise}
  */
 const getProductPricesRegardingSeason = (product, date) => {
@@ -347,11 +347,11 @@ const getProductPricesRegardingSeason = (product, date) => {
 
 /**
  * Return the tour pricing for specific product
- * 
+ *
  * @param {Number} productId        Product identifier
  * @param {Number} bookingPartnerId Booking partner identifier
  * @param {String} date             Date for which prices are actualized
- * 
+ *
  * @returns {Promise}
  */
 const tourPricing = (productId, bookingPartnerId, date) => {
@@ -420,9 +420,9 @@ const tourPricing = (productId, bookingPartnerId, date) => {
 
 /**
  * Return the miscellaneous pricing for specific product
- * 
+ *
  * @param {Number} id Product identifier
- * 
+ *
  * @returns {Promise}
  */
 const miscPricing = (id) => {
@@ -439,10 +439,10 @@ const miscPricing = (id) => {
 
 /**
  * Checks if product is available on specific day if week
- * 
+ *
  * @param {Number} id  Product identifier
  * @param {String} day Day of the week name
- * 
+ *
  * @returns {Promise}
  */
 const isAvailable = (id, day) => {
@@ -470,10 +470,10 @@ const isAvailable = (id, day) => {
 
 /**
  * Returns tour time
- * 
+ *
  * @param {Number} productId Product identifier
  * @param {String} tourDate  Tour date
- * 
+ *
  * @returns {Promise}
  */
 const getTourTime = (productId, tourDate) => {
@@ -516,9 +516,9 @@ const getTourTime = (productId, tourDate) => {
 
 /**
  * Returns price seasons for specific product
- * 
+ *
  * @param {Number} productId Product identifier
- * 
+ *
  * @returns {Promise}
  */
 const getSeasons = (productId) => {
@@ -535,11 +535,11 @@ const getSeasons = (productId) => {
 
 /**
  * Updates price seasons for specific product
- * 
+ *
  * @param {Number} productId Product identifier
  * @param {Object} data      List of seasons
  * @param {Number} userId    Author user identifier
- * 
+ *
  * @returns {Promise}
  */
 const updateSeasons = (productId, data, userId) => {

@@ -6,7 +6,7 @@ const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
 
-const utils = require('../shared/utils');
+const utils = require('./../shared/utils');
 const db = require('./../shared/db');
 
 router.use(utils.protectedRouteCheck);

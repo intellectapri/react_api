@@ -154,6 +154,7 @@ const create = (data, userId) => {
             if (results.length !== 1) {
                 reject(`Product Tour with identifier ${data.productId} was not found`);
             } else {
+              var success = true;
               var prods = results[0];
               let DAYS_OF_WEEK = { availabilitySun: 'Sunday', availabilityMon: 'Monday', availabilityTue: 'Tuesday', availabilityWed: 'Wednesday', availabilityThu: 'Thursday', availabilityFri: 'Friday', availabilitySat: 'Saturday' };
               let curdate = moment(data.tourDate).format('dddd');
@@ -161,128 +162,140 @@ const create = (data, userId) => {
               let nowTime = moment();
               // let cutOff20h = moment(data.tourDate).subtract(20, 'h');
               let cutOff2day = moment(data.tourDate).subtract(prods.cutOff, 'days');
-              // Cutoff
-              if(prods.cutOff > 0){
+
+              if (data.twoDayRule == 0) {
+                // Cutoff
+                if(prods.cutOff > 0){
+                  if (prods.tot_tour == 0) {
+                    if (nowTime.isSameOrAfter(cutOff2day)) {
+                      resolve({messageValidation: `Oops, you have to book before ${cutOff2day.format('LLLL')} - Override to allow the booking to go ahead` });
+                      success = false;
+                    }
+                  }
+                }
+
+                // min pax
                 if (prods.tot_tour == 0) {
-                  if (nowTime.isSameOrAfter(cutOff2day)) {
-                    resolve({messageValidation: `Oops, you have to book before ${cutOff2day.format('LLLL')}` });
+                  let curpax = parseInt(prods.tot_guest) + parseInt(data.totalRiders);
+                  let minpax = prods.minGuestNo - curpax;
+                  if (prods.minGuestNo > 0 && curpax < prods.minGuestNo  ) {
+                    // resolve({messageValidation: `Oops, oops, you have to add ${minpax} more guests, because there are a minimum of ${prods.minGuestNo} guests on this tour` });
+                    resolve({messageValidation: `Minimum ${prods.minGuestNo} guests required - Override to allow the booking to go ahead` });
+                    success = false;
                   }
                 }
               }
 
-              // min pax
-              let curpax = parseInt(prods.tot_guest) + parseInt(data.totalRiders);
-              let minpax = prods.minGuestNo - curpax;
-              if (prods.minGuestNo > 0 && curpax < prods.minGuestNo  ) {
-                resolve({messageValidation: `Oops, oops, you have to add ${minpax} more guests, because there are a minimum of ${prods.minGuestNo} guests on this tour` });
-              }
 
               // insert purchase tour
               // resolve(`insert`);
-              purchases.create(data, userId).then(purchaseId => {
-                  data.purchaseId = purchaseId;
-                  insertValuesClauses = generatePopulateValuesClauses(data);
-                  let sql = `INSERT INTO purchase_tour SET ${insertValuesClauses.join(` , `)}`;
+              if (success == true) {
+                purchases.create(data, userId).then(purchaseId => {
+                    data.purchaseId = purchaseId;
+                    insertValuesClauses = generatePopulateValuesClauses(data);
+                    let sql = `INSERT INTO purchase_tour SET ${insertValuesClauses.join(` , `)}`;
 
-                  db.get().execute(sql, (err, result) => {
-                      if (err) {
-                          reject(err);
-                      } else {
-                          let detailId = result.insertId;
-                          let customerId = (data.customerId ? parseInt(data.customerId) : 0);
+                    db.get().execute(sql, (err, result) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            let detailId = result.insertId;
+                            let customerId = (data.customerId ? parseInt(data.customerId) : 0);
 
-                          let confirmationsPromises = [];
-                          let tourUpdatedPromise = Promise.resolve([]);
-                          if (data.sendToGuest && parseInt(data.sendToGuest) === 1) {
-                              if (!data.email) {
-                                  reject(`Unable to get email for sending confirmation to guest`);
-                              } else {
-                                  if (data.voucher && parseInt(data.voucher) === 1) {
-                                      confirmationsPromises.push(sendConfirmation('voucher', detailId, userId));
-                                  } else {
-                                      tourUpdatedPromise = new Promise( (resolve, reject) => {
-                                          products.get(data.productId).then( product => {
+                            let confirmationsPromises = [];
+                            let tourUpdatedPromise = Promise.resolve([]);
+                            if (data.sendToGuest && parseInt(data.sendToGuest) === 1) {
+                                if (!data.email) {
+                                    reject(`Unable to get email for sending confirmation to guest`);
+                                } else {
+                                    if (data.voucher && parseInt(data.voucher) === 1) {
+                                        confirmationsPromises.push(sendConfirmation('voucher', detailId, userId));
+                                    } else {
+                                        tourUpdatedPromise = new Promise( (resolve, reject) => {
+                                            products.get(data.productId).then( product => {
 
-                                              if( product.typeCode === "VOUCHERS" ){
-                                                  const codes = discounts.generateCode(data.noOfAdult);
-                                                  const valuePerCode = data.adultPrice;
-                                                  const voucherPromises = codes.map( code => {
-                                                      return discounts.create({
-                                                          discountCode: code,
-                                                          expireDate: "2050-01-01",
-                                                          oneTimeUse: 1,
-                                                          active: 1,
-                                                          discountAmount: valuePerCode,
-                                                          discountType: "ABSOLUTE",
-                                                          useCount: 0
-                                                      });
-                                                  })
+                                                if( product.typeCode === "VOUCHERS" ){
+                                                    const codes = discounts.generateCode(data.noOfAdult);
+                                                    const valuePerCode = data.adultPrice;
+                                                    const voucherPromises = codes.map( code => {
+                                                        return discounts.create({
+                                                            discountCode: code,
+                                                            expireDate: "2050-01-01",
+                                                            oneTimeUse: 1,
+                                                            active: 1,
+                                                            discountAmount: valuePerCode,
+                                                            discountType: "ABSOLUTE",
+                                                            useCount: 0
+                                                        });
+                                                    })
 
-                                                  Promise.all(voucherPromises).then( results => {
-                                                      const ids = results.map( result => result.insertId)
-                                                      const sql = `UPDATE purchase_tour SET voucherIDs ='${utils.sanitize(ids.join(','))}' WHERE detailID ='${detailId}'`;
-                                                      db.get().execute(sql, (err, results) =>{
-                                                          if( err ){
-                                                              reject(err)
-                                                          }
-                                                          confirmationsPromises.push(sendConfirmation('standard', detailId, userId, null, codes))
-                                                          resolve(results)
-                                                      })
-                                                  })
-                                              }else{
-                                                  confirmationsPromises.push(sendConfirmation('standard', detailId, userId));
-                                                  resolve([]);
-                                              }
-                                          }).catch( err => {
+                                                    Promise.all(voucherPromises).then( results => {
+                                                        const ids = results.map( result => result.insertId)
+                                                        const sql = `UPDATE purchase_tour SET voucherIDs ='${utils.sanitize(ids.join(','))}' WHERE detailID ='${detailId}'`;
+                                                        db.get().execute(sql, (err, results) =>{
+                                                            if( err ){
+                                                                reject(err)
+                                                            }
+                                                            confirmationsPromises.push(sendConfirmation('standard', detailId, userId, null, codes))
+                                                            resolve(results)
+                                                        })
+                                                    })
+                                                }else{
+                                                    confirmationsPromises.push(sendConfirmation('standard', detailId, userId));
+                                                    resolve([]);
+                                                }
+                                            }).catch( err => {
 
-                                              reject(err)
-                                          })
-                                      } );
+                                                reject(err)
+                                            })
+                                        } );
 
-                                  }
-                              }
-                          }
+                                    }
+                                }
+                            }
 
-                          if (data.sendToPartner && parseInt(data.sendToPartner) === 1) {
-                              if (!data.partnerEmail) {
-                                  reject(`Unable to get email for sending confirmation to partner`);
-                              } else {
-                                  confirmationsPromises.push(sendConfirmation('customer', detailId, userId));
-                              }
-                          }
+                            if (data.sendToPartner && parseInt(data.sendToPartner) === 1) {
+                                if (!data.partnerEmail) {
+                                    reject(`Unable to get email for sending confirmation to partner`);
+                                } else {
+                                    confirmationsPromises.push(sendConfirmation('customer', detailId, userId));
+                                }
+                            }
 
-                          if (data.sendToTourOperator && parseInt(data.sendToTourOperator) === 1) {
-                              if (!data.operatorEmail) {
-                                  reject(`Unable to get email for sending confirmation to tour operator`);
-                              } else {
-                                  confirmationsPromises.push(sendConfirmation('tourOperator', detailId, userId));
-                              }
-                          }
+                            if (data.sendToTourOperator && parseInt(data.sendToTourOperator) === 1) {
+                                if (!data.operatorEmail) {
+                                    reject(`Unable to get email for sending confirmation to tour operator`);
+                                } else {
+                                    confirmationsPromises.push(sendConfirmation('tourOperator', detailId, userId));
+                                }
+                            }
 
 
 
-                          bookingPartners.getInvoiceOption(customerId).then(invoiceOption => {
-                              let invoicePromises = [];
-                              if (customerId > 0) {
-                                  if (invoiceOption) {
-                                      invoicePromises.push(chargesRegenerate.regenerateInvoices(data.purchaseId, userId));
-                                  }
-                              }
+                            bookingPartners.getInvoiceOption(customerId).then(invoiceOption => {
+                                let invoicePromises = [];
+                                if (customerId > 0) {
+                                    if (invoiceOption) {
+                                        invoicePromises.push(chargesRegenerate.regenerateInvoices(data.purchaseId, userId));
+                                    }
+                                }
 
-                              let additionalActionsPromises = confirmationsPromises.concat(invoicePromises);
-                                  additionalActionsPromises.push(tourUpdatedPromise);
-                              Promise.all(additionalActionsPromises).then(() => {
-                                  resolve({
-                                      purchaseId: purchaseId,
-                                      detailId: detailId,
-                                      confirmationSent: confirmationsPromises.length,
-                                      invoicesGenerated: invoicePromises.length
-                                  });
-                              }).catch(reject);
-                          });
-                      }
-                  });
-              }).catch(reject);
+                                let additionalActionsPromises = confirmationsPromises.concat(invoicePromises);
+                                    additionalActionsPromises.push(tourUpdatedPromise);
+                                Promise.all(additionalActionsPromises).then(() => {
+                                    resolve({
+                                        purchaseId: purchaseId,
+                                        detailId: detailId,
+                                        confirmationSent: confirmationsPromises.length,
+                                        invoicesGenerated: invoicePromises.length
+                                    });
+                                }).catch(reject);
+                            });
+                        }
+                    });
+                }).catch(reject);
+
+              }
 
 
             }
